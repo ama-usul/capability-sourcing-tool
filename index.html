@@ -1685,7 +1685,7 @@ const CO_ALIAS={"bluehalo":"AeroVironment"};
 function findDupCo(name){const k=coNorm(name);if(!k)return null;if(CO_ALIAS[k]){const t=COMPANIES.find(c=>c.name===CO_ALIAS[k]);if(t)return t;}return COMPANIES.find(c=>{const n=coNorm(c.name);return n===k||n.replace(/ /g,"")===k.replace(/ /g,"")||(k.length>3&&(n.startsWith(k+" ")||k.startsWith(n+" ")));})||null;}
 const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||"company";
 function loadAdded(){try{ADDED=JSON.parse(localStorage.getItem("companies_added")||"[]");}catch(e){ADDED=[];}applyAdded();
-  fetch("companies_added.json").then(r=>r.ok?r.json():Promise.reject()).then(arr=>{const have=new Set(ADDED.map(x=>x.id));arr.forEach(a=>{if(!have.has(a.id)){ADDED.push(a);have.add(a.id);}});applyAdded();render();}).catch(()=>{});}
+  fetch("companies_added.json").then(r=>r.ok?r.json():Promise.reject()).then(arr=>{const have=new Set(ADDED.map(x=>String(x.name).toLowerCase()));arr.forEach(a=>{if(!have.has(String(a.name).toLowerCase())){ADDED.push(a);have.add(String(a.name).toLowerCase());}});applyAdded();render();renderTiles();}).catch(()=>{});}
 async function storeAdded(doc){
   ADDED=ADDED.filter(a=>a.id!==doc.id);ADDED.push(doc);applyAdded();
   if(addDb){await addDb.collection("companies_added").doc(doc.id).set(doc);}else{try{localStorage.setItem("companies_added",JSON.stringify(ADDED));}catch(e){}}
